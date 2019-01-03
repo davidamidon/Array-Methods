@@ -1,0 +1,32 @@
+<script src="../simpleTest.js"></script>
+<script>
+
+function reduceRight(array, callback, optionalInitialValue) {
+    var accumulator = optionalInitialValue;
+    var startingIndex = array.length - 1;
+    if (arguments.length < 3) {
+      if (Object.keys(array).length === 0) {
+        throw new TypeError('Reduce of empty array with no initial value')
+      }
+      while (startingIndex in array === false && startingIndex > -1) {
+        startingIndex--;
+      }
+      accumulator = array[startingIndex];
+      startingIndex--;
+    }
+    for (var i = startingIndex; i > -1; i--) {
+      if (i in array) {
+        accumulator = callback(accumulator, array[i], i, array);
+      }
+    }
+    return accumulator;
+  }
+
+  tests({
+    'If initialValue, currentValue should start with the last value in array.': function () {
+      reduceRight([0, 1], function (accumulator, currentValue) {
+        eq(currentValue, 1);
+      }, 0);
+    }
+  })
+</script>

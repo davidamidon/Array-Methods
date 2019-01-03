@@ -1,0 +1,65 @@
+<script src="../simpleTest.js"></script>
+<script>
+
+/*
+### Params
+
+
+
+@@@@@@@@@@@@@@@@@@@@@
+
+### Return Value
+
+
+
+@@@@@@@@@@@@@@@@@@@@@
+
+### Description
+
+
+
+*/
+
+function find(array, callback, optionalThisObject) {
+  var findCallback = callback;
+
+  if(optionalThisObject) {
+    findCallback = callback.bind(optionalThisObject)
+  }
+
+  for(var i = 0; i < array.length; i++) {
+    findCallback(array[i], i, array);
+  }
+};
+
+tests({
+  'It should run the callback array.length times': function() {
+    var numberOfTimesCallbackHasRun = 0;
+    find([1, 2, 3], function() {
+      numberOfTimesCallbackHasRun++;
+    });
+    eq(numberOfTimesCallbackHasRun, 3);
+  },
+  'It should pass is the ith element as the first argument to the callback': function() {
+    find([1], function(number) {
+      eq(number, 1);
+    })
+  },
+  'It should pass is the ith position as the second argument to the callback': function() {
+    find([1], function(number, index) {
+      eq(index, 0);
+    })
+  },
+  'It should pass is the original array as the third argument to the callback': function() {
+    var testArray = [1, 2, 3];
+    find(testArray, function(number, index, originalArray) {
+      eq(originalArray, testArray);
+    })
+  },
+  'It should accept an optional this object': function() {
+    find([1], function() {
+      eq(this.description, 'Optional this object');
+    }, {description: 'Optional this object'});
+  }
+});
+</script>

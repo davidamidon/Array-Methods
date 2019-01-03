@@ -1,0 +1,110 @@
+<script src="../simpleTest.js"></script>
+<script>
+
+(function () {
+  var libraryStorage = {};
+
+  function librarySystem(libraryName, dependencies, callback) {
+    // First check the passed argument types and adjust them accordingly.
+
+    // Check for anonymous functions.
+    if (typeof libraryName !== 'string') {
+      try {
+        throw new TypeError('Anonymous functions are not allowed. A string must be passed as the first argument.');
+      } catch (e) {
+        console.groupCollapsed('%c' + 'TypeError', 'color: red;');
+        console.error(e.stack);
+        console.groupEnd();
+      }
+    return;
+    }
+
+    // Check that the second argument is an array.
+    if (!Array.isArray(dependencies) && arguments.length === 2) {
+      // If only 2 arguments are passed then remap the arguments.
+      callback = dependencies;
+      dependencies = null;
+    } else if (!Array.isArray(dependencies) && arguments.length === 3) {
+      // If 3 arguments were passed, throw a typeError as dependencies must be an array.
+      try {
+        throw new TypeError('Expected Array as second argument');
+      } catch (e) {
+        console.groupCollapsed('%c' + 'TypeError', 'color: red;');
+        console.error(e.stack);
+        console.groupEnd();
+      }
+    return;
+    }
+
+    // Work on the arguments.
+
+    // Either create the new library or return an existing library.
+    if(arguments.length === 2) {
+            // Create a new library with no dependencies.
+            libraryStorage[libraryName] = callback();
+    } else if(arguments.length === 3) {
+      // Create a new library and pass in dependencies to the callback.
+      var returnOfDependencies = [];
+      dependencies.forEach(function(dependency) {
+        returnOfDependencies.push(libraryStorage[dependency]);
+      });
+      libraryStorage[libraryName] = callback.apply(null, returnOfDependencies);
+
+    } else {
+            // Return an existing library.
+            return libraryStorage[libraryName];
+    }
+
+  }
+
+  // Create the librarySystem on the Window.
+  window.librarySystem = librarySystem;
+})();
+
+
+// Tests
+// 2 arguments
+librarySystem('2Args', function() {
+  return 'No dependencies';
+});
+
+librarySystem('2Args'); // returns 'No dependencies'
+
+
+// 3 arguments w/empty dependencies array
+librarySystem('name', [], function() {
+  return 'David';
+});
+
+librarySystem('location', [], function() {
+  return 'home';
+});
+
+librarySystem('name'); // returns 'David'
+librarySystem('location'); // returns 'home'
+
+
+// 3 arguments w/dependencies array
+librarySystem('workSpot', ['name', 'location'], function(name, location) {
+  return name + ' works from ' + location;
+});
+
+librarySystem('workSpot'); // 'David works from home'
+
+
+// Error Handling
+// Anonymous function or first argument not a string
+librarySystem( function() {});
+librarySystem({}, function() {});
+librarySystem([], function() {});
+librarySystem(1234, function() {});
+// Throws a TypeError 
+
+// Second argument not an array
+librarySystem('notArray', 'string', function() {});
+librarySystem('notArray', {}, function() {});
+librarySystem('notArray', function() {}, function() {});
+// Throws a TypeError
+
+
+</script>

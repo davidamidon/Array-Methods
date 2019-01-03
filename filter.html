@@ -1,0 +1,142 @@
+<script src="../tinytest.js"></script>
+<script>
+
+function filter(originalArray, callback, optionalThis) {
+  var filterCallback = callback;
+
+  if (optionalThis) {
+    filterCallback = callback.bind(optionalThis);
+  }
+
+  var filteredArray = [];
+
+  for (var i = 0; i < originalArray.length; i++) {
+    if (filterCallback(originalArray[i], i, originalArray)) {
+      filteredArray.push(originalArray[i]);
+    }
+  }
+
+  return filteredArray;
+};
+
+/*
+
+Example 1:
+filter([1, 2, 3], function() {});
+
+Example 2:
+filter([1, 2, 3], function(number) {
+  console.log(number);
+});
+
+Example 3:
+filter([1, 2, 3], function(number, index) {
+  console.log(index);
+});
+
+Example 4:
+filter([1, 2, 3], function(number, index, originalArray) {
+  console.log(originalArray);
+});
+
+Example 5:
+filter([1, 2, 3], function() {
+  console.log(this.name);
+}, {name: 'David'});
+
+Example 6:
+var testArray = [1, 2, 3];
+var filteredArray = filter(testArray, function() {});
+testArray !== filteredArray
+
+Example 7:
+var testArray = [1, 2, 3];
+var filteredArray = filter(testArray, function() {
+  return element > 1
+});
+filteredArray = [2, 3]
+
+
+callback
+    Function is a predicate, to test each element of the array. Return true to keep the element, false otherwise. It accepts three arguments:
+
+    element
+        The current element being processed in the array.
+    indexOptional
+        The index of the current element being processed in the array.
+    arrayOptional
+        The array filter was called upon.
+
+thisArg Optional
+    Optional. Value to use as this when executing callback.
+
+Link to sectionReturn value
+
+A new array with the elements that pass the test. If no elements pass the test, an empty array will be returned.
+
+
+
+filter() calls a provided callback function once for each element in an array, and constructs a new array of all the values for which callback returns a value that coerces to true. callback is invoked only for indexes of the array which have assigned values; it is not invoked for indexes which have been deleted or which have never been assigned values. Array elements which do not pass the callback test are simply skipped, and are not included in the new array.
+
+callback is invoked with three arguments:
+
+    the value of the element
+    the index of the element
+    the Array object being traversed
+
+If a thisArg parameter is provided to filter, it will be used as the callback's this value.  Otherwise, the value undefined will be used as its this value. The this value ultimately observable by callback is determined according to the usual rules for determining the this seen by a function.
+
+filter() does not mutate the array on which it is called.
+
+The range of elements processed by filter() is set before the first invocation of callback. Elements which are appended to the array after the call to filter() begins will not be visited by callback. If existing elements of the array are changed, or deleted, their value as passed to callback will be the value at the time filter() visits them; elements that are deleted are not visited.
+
+*/
+
+
+tests({
+  'It should run the callback function array.length times.': function() {
+    var counter = 0;
+    filter([1, 2, 3], function() {
+      counter++;
+    });
+    eq(counter, 3);
+  },
+  'It should pass in the ith element as the first argument to the callback.': function() {
+    filter([1], function(number) {
+      eq(number, 1);
+    })
+  },
+  'It should pass in the ith position as the second argurment to the callback.': function( ) {
+    filter([1], function(number, index) {
+      eq(index, 0);
+    })
+  },
+  'It should pass in the original array as the third argument to the callback.': function() {
+    var testArray = [1, 2, 3];
+    filter(testArray, function(number, index, originalArray) {
+      eq(originalArray, testArray);
+    })
+  },
+  'It should accept an optional this object': function() {
+    filter([1], function() {
+      eq(this.description, 'Configurable this object');
+    }, {description: 'Configurable this object'});
+  }, 
+  'It should return a new array, not the array being filtered.' : function() {
+    var testArray = [];
+    var filteredArray = filter(testArray, function() {});
+    eq(testArray !== filteredArray, true);
+  },
+  'It should return an array': function() {
+    var filteredArray = filter([], function() {});
+    eq(Array.isArray(filteredArray), true);
+  },
+  'It should return a new array that only has elements where callback() is true.': function() {
+    var filteredArray = filter([1, 2], function(number) {
+      return number > 1;
+    });
+    eq(filteredArray.length, 1);
+    eq(filteredArray[0], 2);
+  }
+});
+</script>
