@@ -2,64 +2,85 @@
 <script>
 
 /*
-### Params
-
-
-
-@@@@@@@@@@@@@@@@@@@@@
-
-### Return Value
-
-
-
-@@@@@@@@@@@@@@@@@@@@@
-
-### Description
-
-
+The concat() method is used to merge two or more arrays. This method does not change the existing arrays, but instead returns a new array.
 
 */
 
-function find(array, callback, optionalThisObject) {
-  var findCallback = callback;
+// var combo = [array1, array2]
+function concat() {
+  var length = arguments.length;
+  var nonObjectReferences;
+  var result = [];
 
-  if(optionalThisObject) {
-    findCallback = callback.bind(optionalThisObject)
+  for(var i = 0; i < length; i++) {
+    if(Array.isArray(arguments[i]) || typeof arguments[i] === 'object') {
+      result.push(arguments[i]);
+    } else { 
+      nonObjectReferences = arguments[i];
+      result.push(nonObjectReferences);
+    }
   }
 
-  for(var i = 0; i < array.length; i++) {
-    findCallback(array[i], i, array);
-  }
+  return result;
+
+
 };
 
+
+
 tests({
-  'It should run the callback array.length times': function() {
-    var numberOfTimesCallbackHasRun = 0;
-    find([1, 2, 3], function() {
-      numberOfTimesCallbackHasRun++;
-    });
-    eq(numberOfTimesCallbackHasRun, 3);
+  'It should return an array': function() {
+    var one = [1];
+    var two = [2];
+    var result = concat(one, two);
+    eq(Array.isArray(result), true);
   },
-  'It should pass is the ith element as the first argument to the callback': function() {
-    find([1], function(number) {
-      eq(number, 1);
-    })
+  'It should return an array of length 2 if only 2 arguments are passed': function() {
+    var one = [1];
+    var two = [2];
+    var result = concat(one, two);
+    eq(result.length, 2);
   },
-  'It should pass is the ith position as the second argument to the callback': function() {
-    find([1], function(number, index) {
-      eq(index, 0);
-    })
+  'It should return an array of length 3 if 3 arguments are passed': function() {
+    var one = [1];
+    var two = [2];
+    var three = [3];
+    var result = concat(one, two, three);
+    eq(result.length, 3);
   },
-  'It should pass is the original array as the third argument to the callback': function() {
-    var testArray = [1, 2, 3];
-    find(testArray, function(number, index, originalArray) {
-      eq(originalArray, testArray);
-    })
+  'It should not mutate the original array': function() {
+    var one = [1];
+    var two = [2];
+    var result = concat(one, two);
+    eq(one.length, 1);
   },
-  'It should accept an optional this object': function() {
-    find([1], function() {
-      eq(this.description, 'Optional this object');
-    }, {description: 'Optional this object'});
+  'It should copy object references into the new array': function() {
+    var one = [1];
+    var two = {name: 'David'};
+    var result = concat(one, two);
+    eq(result[1].name, 'David');
+    two.name = 'Payton';
+    eq(result[1].name, 'Payton');
+  },
+  'It should copy non array values to the new array': function() {
+    var one = [1];
+    var two = 2;
+    var stringTest = 'three';
+    var booleanTest = true;
+    var objectTest = {name: 'David'};
+    var result = concat(one, two, stringTest, booleanTest, objectTest);
+    eq(result[1], 2);
+    eq(result[2], 'three');
+    eq(result[3], true);
+    eq(result[4].name, 'David');
+  },
+  'It should copy nested arrays to the new array': function() {
+    var one = [1];
+    var two = [[2]];
+    var result = concat(one, two);
+    eq(result[1][0], 2);
+    two.push(3);
+    eq(result[1][1], 3);
   }
 });
 </script>
