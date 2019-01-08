@@ -1,0 +1,80 @@
+<script src="../simpleTest.js"></script>
+<script>
+
+/*
+
+The includes() method determines whether an array includes a certain value among its entries, returning true or false as appropriate.
+
+*/
+
+function includes(array, elementToSearchFor, optionalStartingIndex) {
+  let startingPosition = 0;
+  const length = array.length;
+  let computedValue;
+
+  if(arguments.length === 3) {
+    if(typeof optionalStartingIndex === 'number') {
+      if(optionalStartingIndex < 0) {
+        computedValue = length + optionalStartingIndex;
+        if(computedValue > 0) {
+          startingPosition = computedValue;
+        } else {
+          startingPosition = 0;
+        }
+      }
+      if(optionalStartingIndex >= length) {
+        return false;
+      }
+      if(optionalStartingIndex > 0 && optionalStartingIndex < length) {
+        startingPosition = optionalStartingIndex;
+      }
+    } 
+  }
+
+  if(elementToSearchFor === null) {
+    throw new TypeError('Your search element is null or not defined');
+  } 
+
+  for(let i = startingPosition; i < array.length; i++) {
+    if(array[i] === elementToSearchFor) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+tests({
+  'It should search the array for the element and return the index of the element if it is present': function() {
+    const result = includes([1, 2, 3], 2);
+    eq(result, true);
+  },
+  'It should search the array for the element and return -1 if it is not present': function() {
+    const result = includes([1, 2, 3], 4);
+    eq(result, false);
+  },
+  'It should search the array starting with the optionalStartingIndex rather than position 0': function() {
+    const result = includes([1, 2, 3, 4, 5, 6], 1, 2);
+    eq(result, false);
+  },
+  'It should throw a TypeError if null is passed as the second argument': function() {
+    let isTypeError = false;
+    try {
+      const result = includes([1, 2, 3, 4, 5, 6], null);
+    } catch(e) {
+      isTypeError = (e instanceof TypeError);
+    }
+    eq(isTypeError, true);
+  },
+  'It should return false without searching the array if the optionalStartingIndex is greater than or equal to the length of the array': function() {
+    const result = includes([1], 1, 5);
+    eq(result, false);
+  },
+  'If the optionalStartingIndex is negative, it should use a computed value to calculate the starting index (less than or equal to the negative value of the length of the array)': function() {
+    let result = includes(['a', 'b', 'c'], 'a', -2);
+    eq(result, false);
+    result = includes(['a', 'b', 'c'], 'a', -100);
+    eq(result, true);
+  }
+});
+</script>

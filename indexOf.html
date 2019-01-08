@@ -1,0 +1,55 @@
+<script src="../simpleTest.js"></script>
+<script>
+
+/*
+
+The indexOf() method returns the first index at which a given element can be found in the array, or -1 if it is not present.
+
+*/
+
+function indexOf(array, elementToSearchFor, optionalStartingIndex) {
+  startingPosition = 0;
+
+  if(arguments.length === 3) {
+    if(typeof optionalStartingIndex === 'number') {
+      startingPosition = optionalStartingIndex;
+    } 
+  }
+
+  if(elementToSearchFor === null) {
+    throw new TypeError('Your search element is null or not defined');
+  } 
+
+  for(let i = startingPosition; i < array.length; i++) {
+    if(array[i] === elementToSearchFor) {
+      return i;
+    }
+  }
+
+  return -1;
+};
+
+tests({
+  'It should search the array for the element and return the index of the element if it is present': function() {
+    const result = indexOf([1, 2, 3], 2);
+    eq(result, 1);
+  },
+  'It should search the array for the element and return -1 if it is not present': function() {
+    const result = indexOf([1, 2, 3], 4);
+    eq(result, -1);
+  },
+  'It should search the array starting with the optionalStartingIndex rather than position 0': function() {
+    const result = indexOf([1, 2, 3, 4, 5, 6], 1, 2);
+    eq(result, -1);
+  },
+  'It should throw a TypeError if null is passed as the second argument': function() {
+    let isTypeError = false;
+    try {
+      const result = indexOf([1, 2, 3, 4, 5, 6], null);
+    } catch(e) {
+      isTypeError = (e instanceof TypeError);
+    }
+    eq(isTypeError, true);
+  }
+});
+</script>
