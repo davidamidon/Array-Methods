@@ -1,0 +1,87 @@
+<script src="../simpleTest.js"></script>
+<script>
+
+/*
+The join() method creates and returns a new string by concatenating all of the elements in an array (or an array-like object), separated by commas or a specified separator string.
+
+*/
+
+function join(array, optionalSeperator) {
+  let result = '';
+  let seperator = ',';
+  const length = array.length;
+
+  if(!Array.isArray(array)) {
+    throw new TypeError('Only Array types are supported')
+  }
+
+  if(optionalSeperator) {
+    seperator = optionalSeperator.toString();
+  }
+
+  if(length === 1) {
+    return array[0].toString();
+  }
+
+  for(let i = 0; i < length; i++) {
+    if(i in array && array[i] !== null && typeof array[i] !== 'undefined') {
+      if(optionalSeperator === '') {
+        result = result+= array[i];
+      }
+      else if(optionalSeperator !== '' && i < length -1) {
+        result = result+= array[i] + seperator;
+      } else {
+        result = result+= array[i];
+      }
+    }
+  }
+  
+  return result;
+};
+
+tests({
+  'It should return a string': function() {
+    const result = join([1]);
+    eq(typeof result, 'string');
+    eq(result.length, 1);
+  },
+  'It should return an empty string if array.length is 0': function() {
+    const result = join([]);
+    eq(result.length, 0);
+  },
+  'It should return a concatenated string of the passed in array elements seperated by a comma if no optionalSeperator is passed': function() {
+    const result = join([1, 2, 3]);
+    eq(typeof result, 'string');
+    eq(result, '1,2,3');
+  },
+  'It should return a concatenated string of the passed in array elements seperated by the optionalSeperator string': function() {
+    const result = join([1, 2, 3], '.');
+    eq(typeof result, 'string');
+    eq(result, '1.2.3');
+  },
+  'It should throw a TypeError if array is not the first argument passed': function() {
+    let isTypeError = false;
+    try {
+      const result = join(1);
+    } catch(e) {
+      isTypeError = (e instanceof TypeError);
+    }
+    eq(isTypeError, true);
+  },
+  'It should convert the optionalSeperator to a string if necessary': function() {
+    const result = join([1, 2, 3], true);
+    eq(typeof result, 'string');
+    eq(result, '1true2true3');
+  },
+  'It should concatenate the elements without any characters in between them if the optionalSeperator is an empty string': function() {
+    const result = join([1, 2, 3], '');
+    eq(typeof result, 'string');
+    eq(result, '123');
+  },
+  'It should skip holes, null, and undefined values in the array and continue concatenating the other values': function() {
+    const result = join([1, null, 2,, 3, undefined], '');
+    eq(typeof result, 'string');
+    eq(result, '123');
+  }
+});
+</script>
