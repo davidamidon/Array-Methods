@@ -1,0 +1,122 @@
+<script src="../simpleTest.js"></script>
+<script>
+
+/*
+The slice() method returns a shallow copy of a portion of an array into a new array object selected from begin to end (end not included). The original array will not be modified.
+
+*/
+
+function slice(originalArray, startingIndex, endingIndex) {
+  let length = originalArray.length;
+  let nonObjectReferences;
+  let startSliceFromIndex = 0
+  let endSliceAtIndex = length;
+  const result = [];
+  
+  if(startingIndex !== 'undefined' && typeof startingIndex === 'number') {
+    if(startingIndex < 0) {
+      startSliceFromIndex = length + startingIndex;
+    } else {
+      startSliceFromIndex = startingIndex;
+    }
+  }
+
+  if(endingIndex !== 'undefined' && typeof endingIndex === 'number') {
+    if(endingIndex > length) {
+      endSliceAtIndex = length;
+    } else if(endingIndex < 0) {
+      endSliceAtIndex = length + endingIndex;
+    } else {
+      endSliceAtIndex = endingIndex;
+    }
+
+  }
+
+  for(let i = startSliceFromIndex; i < endSliceAtIndex; i++) {
+    if(Array.isArray(originalArray[i]) || typeof originalArray[i] === 'object') {
+      result.push(originalArray[i]);
+    } else { 
+      nonObjectReferences = originalArray[i];
+      result.push(nonObjectReferences);
+    }
+  }
+
+  return result;
+};
+
+tests({
+  'It should not alter the original array': function() {
+    const originalArray = [1, 2];
+    const result = slice(originalArray);
+    eq(originalArray.length, 2);
+  },
+  'It should return an array': function() {
+    const result = slice([1]);
+    eq(Array.isArray(result), true);
+  },
+  'It should copy object references into the new array': function() {
+    const one = [{name: 'David'}];
+    const result = slice(one);
+    eq(result[0].name, 'David');
+    one[0].name = 'Payton';
+    eq(result[0].name, 'Payton');
+  },
+  'It should copy non array values to the new array': function() {
+    const testArray = [1, 'string', true]
+    const result = slice(testArray);
+    eq(result[0], 1);
+    eq(result[1], 'string');
+    eq(result[2], true);
+    testArray[1] = 'updated';
+    eq(result[1], 'string');
+  },
+  'It should not update the original array if the new array has an element added': function() {
+    const one = [1];
+    const result = slice(one);
+    eq(result.length, 1);
+    result.push('newElement');
+    eq(result.length, 2);
+    eq(one.length, 1);
+  },
+  'It should not update the new array if the original array has an element added': function() {
+    const one = [1];
+    const result = slice(one);
+    eq(result.length, 1);
+    one.push('newElement');
+    eq(result.length, 1);
+    eq(one.length, 2);
+  },
+  'It should begin from index 0, if startingIndex is undefined': function() {
+    const result = slice([1, 2, 3]);
+    eq(result.length, 3);
+  },
+  'It should begin from startingIndex if a valid value is passed to slice as the startingIndex': function() {
+    const result = slice([1, 2, 3], 1);
+    eq(result.length, 2);
+  },
+  'It should return an empty array if startingIndex is greater than the length of the array': function() {
+    const result = slice([1, 2, 3], 15);
+    eq(result.length, 0);
+  },
+  'It should begin at the ith position from the end of the array if a negative startingIndex is passed': function() {
+    const result = slice([1, 2, 3, 4, 5], -2);
+    eq(result.length, 2);
+    eq(result[0], 4);
+    eq(result[1], 5);
+  },
+  'It should extract up to but not including endingIndex if a value is passed to clise as the endingIndex': function() {
+    const result = slice([1, 2, 3], 0, 2);
+    eq(result.length, 2);
+  },
+  'It should extract up to but not including endingIndex if a value is passed to clise as the endingIndex': function() {
+    const result = slice([1, 2, 3], 0, 20);
+    eq(result.length, 3);
+  },
+  'It should end at the ith position from the end of the array if a negative endingIndex is passed': function() {
+    const result = slice([1, 2, 3, 4, 5], 0, -2);
+    eq(result.length, 3);
+    eq(result[0], 1);
+    eq(result[1], 2);
+  }
+});
+</script>
