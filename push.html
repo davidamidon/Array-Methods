@@ -1,0 +1,55 @@
+<script src="../simpleTest.js"></script>
+<script>
+
+/*
+The push() method adds one or more elements to the end of an array and returns the new length of the array.
+
+*/
+
+function push(array) {
+  let arrayLength = array.length || 0;
+  const argumentsLength = arguments.length;
+
+  if(argumentsLength === 2 && !Array.isArray(arguments[1])) {
+    array[arrayLength] = arguments[1];
+  } else if(argumentsLength === 2 && Array.isArray(arguments[1])) {
+    for(let i = 0; i < arguments[1].length; i++) {
+      array[arrayLength] = arguments[1][i];
+      arrayLength++;
+    }
+  } else if(argumentsLength > 2) {
+    for(let i = 1; i < argumentsLength; i++) {
+      array[arrayLength] = arguments[i];
+      arrayLength++;
+    }
+  }
+
+  return array.length;
+  
+};
+
+tests({
+  'It should append a single passed element to the existing array': function() {
+    const array = ['soccer', 'football'];
+    const result = push(array, 'rugby');
+    eq(result, 3);
+    eq(array[2], 'rugby');
+  },
+  'It should append the passed elements to the existing array': function() {
+    const array = ['soccer', 'football'];
+    const result = push(array, 'tennis', 'track & field');
+    eq(result, 4);
+    eq(array[2], 'tennis');
+    eq(array[3], 'track & field');
+  },
+  'It should append the passed array elements to the existing array': function() {
+    const array = ['soccer', 'football'];
+    const result = push(array, ['tennis', 'track & field']);
+    console.log(array);
+    console.log(result);
+    eq(result, 4);
+    eq(array[2], 'tennis');
+    eq(array[3], 'track & field');
+  }
+});
+</script>
