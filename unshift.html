@@ -1,0 +1,75 @@
+<script src="../simpleTest.js"></script>
+<script>
+
+/*
+The unshift() method adds one or more elements to the beginning of an array and returns the new length of the array.
+
+*/
+
+// function unshift(array) {
+//   const arrayOfArguments = [];
+
+//   for(let i = 1; i < arguments.length; i++) {
+//     arrayOfArguments.push(arguments[i]);
+//   }
+
+//   array = arrayOfArguments.concat(array);
+
+//   return array.length;
+// };
+
+function unshift(array) {
+  const arrayOfArguments = [];
+  const originalArray = array.slice();
+  array.length = 0;
+
+  for(let i = 1; i < arguments.length; i++) {
+    arrayOfArguments.push(arguments[i]);
+  }
+
+  for(let j = 0; j < arrayOfArguments.length; j++) {
+    array.push(arrayOfArguments[j]);
+  }
+
+  for(let k = 0; k < originalArray.length; k++) {
+    array.push(originalArray[k]);
+  }
+
+  return array.length;
+};
+
+tests({
+  'It should return the new length property of the array upon which the method was called': function() {
+    let testArray = [1];
+    let result = unshift(testArray, 2, 3, 4);
+    eq(result, 4);
+
+  },
+  'It should insert a single value at the beginning of the array upon which it was called': function() {
+    let test = [1];
+    unshift(test, 2);
+    eq(test[0], 2);
+    eq(test[1], 1);
+  },
+  'It should insert n values at the beginning of the array upon which it was called': function() {
+    let test = [1];
+    unshift(test, 2, 3, 4);
+    console.log(test);
+    eq(test[0], 2);
+    eq(test[1], 3);
+    eq(test[3], 1);
+  },
+  'It should insert null values at the beginning of the array upon which it was called': function() {
+    let test = [1];
+    unshift(test, null);
+    console.log(test);
+    eq(test[0], null);
+  },
+  'It should insert undefined values at the beginning of the array upon which it was called': function() {
+    let test = [1];
+    unshift(test, undefined);
+    console.log(test);
+    eq(test[0], undefined);
+  }
+});
+</script>
