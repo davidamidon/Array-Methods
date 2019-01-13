@@ -4,46 +4,114 @@
 /*
 The fill() method fills all the elements of an array from a start index to an end index with a static value. The end index is not included.
 
-### Params
-
-value
-  Value to fill an array.
-
-start Optional
-  Start index, defaults to 0.
-
-end Optional
-  End index, defaults to this.length.
-
-@@@@@@@@@@@@@@@@@@@@@
-
-### Return Value
-
-The modified array.
-
-@@@@@@@@@@@@@@@@@@@@@
-
 ### Description
 
-The fill method takes up to three arguments value, start and end. The start and end arguments are optional with default values of 0 and the length of the this object.
-
-If start is negative, it is treated as length+start where length is the length of the array. If end is negative, it is treated as length+end.
 
 fill is intentionally generic, it does not require that its this value be an Array object.
 
-fill is a mutable method, it will change this object itself, and return it, not just return a copy of it.
-
-When fill gets passed an object, it will copy the reference and fill the array with references to that object.
-
 */
 
-function fill(array) {
+function fill(array, value, startingIndex, endingIndex) {
+  let begin = 0;
+  let end = array.length;
 
+  if(startingIndex && typeof startingIndex === 'number') {
+    if(startingIndex > 0) {
+      begin = startingIndex;  
+    } else if (startingIndex < 0) {
+      begin = array.length + startingIndex;
+    }
+  }
+
+  if(endingIndex && typeof endingIndex === 'number') {
+    if(endingIndex > 0) {
+      end = endingIndex + 1;  
+    } else if (endingIndex < 0) {
+      end = array.length + endingIndex + 1;
+    }
+  }
+
+  for(let i = begin; i < end; i++) {
+    array[i] = value;
+  }
+
+  return array;
 };
 
 tests({
-  'It should run the callback array.length times': function() {
-    fail();
+  'It should change the existing array elements to the value passed as the second argument': function() {
+    let array = [1, 2, 3];
+    let result = fill(array, 0);
+    eq(result[0], 0);
+    eq(result[1], 0);
+    eq(result[2], 0);
+    eq(result.length, 3);
+  },
+  'It should begin at the startingIndex if it is passed': function() {
+    let array = [1, 2, 3];
+    let result = fill(array, 0, 1);
+    eq(result[0], 1);
+    eq(result[1], 0);
+    eq(result[2], 0);
+    eq(result.length, 3);
+  },
+  'It should begin at index 0 if the startingIndex is not passed': function() {
+    let array = [1, 2, 3];
+    let result = fill(array, 0);
+    eq(result[0], 0);
+    eq(result[1], 0);
+    eq(result[2], 0);
+    eq(result.length, 3);
+  },
+  'It should begin at the index equal to length+startingIndex if the startingIndex is negative': function() {
+    let array = [1, 2, 3];
+    let result = fill(array, 0, -1);
+    eq(result[0], 1);
+    eq(result[1], 2);
+    eq(result[2], 0);
+    eq(result.length, 3);
+  },
+  'It should end at the endingIndex if it is passed': function() {
+    let array = [1, 2, 3];
+    let result = fill(array, 0, 1, 1);
+    eq(result[0], 1);
+    eq(result[1], 0);
+    eq(result[2], 3);
+    eq(result.length, 3);
+  },
+  'It should end at index equal to the length if the endingIndex is not passed': function() {
+    let array = [1, 2, 3];
+    let result = fill(array, 0, 2);
+    eq(result[0], 1);
+    eq(result[1], 2);
+    eq(result[2], 0);
+    eq(result.length, 3);
+  },
+  'It should end at the index equal to length+endingIndex if the endingIndex is negative': function() {
+    let array = [1, 2, 3];
+    let result = fill(array, 0, 0, -2);
+    eq(result[0], 0);
+    eq(result[1], 0);
+    eq(result[2], 3);
+    eq(result.length, 3);
+  },
+  'It should mutate the orginal array and return it': function() {
+    let array = [1, 2, 3];
+    fill(array, 0);
+    eq(array[0], 0);
+    eq(array[1], 0);
+    eq(array[2], 0);
+    eq(array.length, 3);
+  },
+  'When fill gets passed an object, it should copy the reference and fill the array with references to that object': function() {
+    let array = [1, 2, 3];
+    const obj = {name: 'David'}
+    fill(array, obj);
+    eq(array[0].name, 'David');
+    obj.name = 'Payton';
+    eq(array[1].name, 'Payton');
+    eq(array[2].name, 'Payton');
+    eq(array.length, 3);
   }
 });
 </script>
