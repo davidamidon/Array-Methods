@@ -2,64 +2,56 @@
 <script>
 
 /*
-### Params
-
-
+The reverse() method reverses an array in place. The first array element becomes the last, and the last array element becomes the first.
 
 @@@@@@@@@@@@@@@@@@@@@
 
 ### Return Value
 
-
+The reversed array
 
 @@@@@@@@@@@@@@@@@@@@@
 
 ### Description
 
+Section
+The reverse method transposes the elements of the calling array object in place, mutating the array, and returning a reference to the array.
 
 
 */
 
-function find(array, callback, optionalThisObject) {
-  var findCallback = callback;
+function reverse(array) {
+  const originalArray = array.slice();
+  array.length = 0;
 
-  if(optionalThisObject) {
-    findCallback = callback.bind(optionalThisObject)
+  for(var i = originalArray.length - 1; i >= 0; i--) {
+    array.push(originalArray[i]);
   }
 
-  for(var i = 0; i < array.length; i++) {
-    findCallback(array[i], i, array);
-  }
+  return array;
 };
 
 tests({
-  'It should run the callback array.length times': function() {
-    var numberOfTimesCallbackHasRun = 0;
-    find([1, 2, 3], function() {
-      numberOfTimesCallbackHasRun++;
-    });
-    eq(numberOfTimesCallbackHasRun, 3);
+  'It should return an array': function() {
+    let array = [1, 2];
+    const result = reverse(array);
+    eq(Array.isArray(result), true)
   },
-  'It should pass is the ith element as the first argument to the callback': function() {
-    find([1], function(number) {
-      eq(number, 1);
-    })
+  'It should reverse the passed in array': function() {
+    let array = [1, 2, 3];
+    const result = reverse(array);
+    eq(result[0], 3);
+    eq(result[1], 2);
+    eq(result[2], 1);
+    eq(result.length, 3);
   },
-  'It should pass is the ith position as the second argument to the callback': function() {
-    find([1], function(number, index) {
-      eq(index, 0);
-    })
-  },
-  'It should pass is the original array as the third argument to the callback': function() {
-    var testArray = [1, 2, 3];
-    find(testArray, function(number, index, originalArray) {
-      eq(originalArray, testArray);
-    })
-  },
-  'It should accept an optional this object': function() {
-    find([1], function() {
-      eq(this.description, 'Optional this object');
-    }, {description: 'Optional this object'});
+  'It should mutate the original array': function() {
+    let array = [1, 2, 3];
+    reverse(array);
+    eq(array[0], 3);
+    eq(array[1], 2);
+    eq(array[2], 1);
+    eq(array.length, 3);
   }
 });
 </script>
